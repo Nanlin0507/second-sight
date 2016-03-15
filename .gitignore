@@ -6,6 +6,7 @@ node_modules
 /bazel-tensorflow
 /bazel-testlogs
 /bazel-tf
+/data
 /tensorflow/contrib/cmake/build
 /third_party/gpus/cuda/bin
 /third_party/gpus/cuda/cuda.config
@@ -20,3 +21,4 @@ node_modules
 /pip_test
 /_python_build
 *.pyc
+*checkpoint.ipynb
