@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package com.martinbede.second-sight;
+package com.martinbede.secondsight;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -29,8 +29,8 @@ import android.os.Trace;
 
 import junit.framework.Assert;
 
-import com.martinbede.second-sight.env.ImageUtils;
-import com.martinbede.second-sight.env.Logger;
+import com.martinbede.secondsight.env.ImageUtils;
+import com.martinbede.secondsight.env.Logger;
 
 import java.util.List;
 

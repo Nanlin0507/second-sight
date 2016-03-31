@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.martinbede.second-sight;
+package com.martinbede.secondsight;
 
 import android.content.Context;
 import android.util.AttributeSet;

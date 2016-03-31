@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package com.martinbede.second-sight.env;
+package com.martinbede.secondsight.env;
 
 import android.graphics.Bitmap;
 import android.os.Environment;

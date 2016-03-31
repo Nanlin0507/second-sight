@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package com.martinbede.second-sight;
+package com.martinbede.secondsight;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -22,7 +22,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.martinbede.second-sight.Classifier.Recognition;
+import com.martinbede.secondsight.Classifier.Recognition;
 
 import java.util.List;
 
