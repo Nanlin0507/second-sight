@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tensorflow.demo;
+package com.martinbede.second-sight;
 
 import android.app.Activity;
 import android.os.Bundle;

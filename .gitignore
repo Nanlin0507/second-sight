@@ -3,6 +3,7 @@ node_modules
 /bazel-ci_build-cache
 /bazel-genfiles
 /bazel-out
+/bazel-second-sight
 /bazel-tensorflow
 /bazel-testlogs
 /bazel-tf
