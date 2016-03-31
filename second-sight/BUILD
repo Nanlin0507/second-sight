@@ -1,5 +1,6 @@
 # Description:
-#   Tensorflow camera demo app for Android.
+#   An Android app to assist the visually impaired.
+#   Based on the Tensorflow camera demo app for Android.
 
 package(default_visibility = ["//visibility:public"])
 
@@ -62,14 +63,47 @@ cc_library(
     ],
 )
 
+java_library(
+  name="google-api-client-android",
+  visibility = ["//visibility:public"],
+  exports = [
+    "@com_fasterxml_jackson_core_jackson_core//jar",
+    "@com_google_api_client_google_api_client//jar",
+    "@com_google_api_client_google_api_client_android//jar",
+    "@com_google_code_findbugs_jsr305//jar",
+    "@com_google_guava_guava_jdk5//jar",
+    "@com_google_http_client_google_http_client//jar",
+    "@com_google_http_client_google_http_client_android//jar",
+    "@com_google_http_client_google_http_client_jackson2//jar",
+    "@com_google_oauth_client_google_oauth_client//jar",
+    "@commons_codec_commons_codec//jar",
+    "@commons_logging_commons_logging//jar",
+    "@org_apache_httpcomponents_httpcore//jar",
+  ],
+)
+
+java_library(
+  name="google-http-client-gson",
+  visibility = ["//visibility:public"],
+  exports = [
+    "@com_google_code_findbugs_jsr305//jar",
+    "@com_google_code_gson_gson//jar",
+    "@com_google_http_client_google_http_client//jar",
+    "@com_google_http_client_google_http_client_gson//jar",
+    "@commons_codec_commons_codec//jar",
+    "@commons_logging_commons_logging//jar",
+    "@org_apache_httpcomponents_httpcore//jar",
+  ],
+)
+
 android_binary(
-    name = "tensorflow_demo",
+    name = "second-sight",
     srcs = glob([
         "src/**/*.java",
     ]),
     assets = glob(["assets/**"]),
     assets_dir = "assets",
-    custom_package = "org.tensorflow.demo",
+    custom_package = "com.martinbede.secondsight",
     inline_constants = 1,
     manifest = "AndroidManifest.xml",
     resource_files = glob(["res/**"]),
@@ -79,6 +113,9 @@ android_binary(
     ],
     deps = [
         ":tensorflow_native_libs",
+        "google-http-client-gson",
+        "@google_api_services_vision//jar",
+        "google-api-client-android",
     ],
 )
 
