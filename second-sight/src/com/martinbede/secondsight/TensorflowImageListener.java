@@ -33,6 +33,7 @@ import com.martinbede.secondsight.env.ImageUtils;
 import com.martinbede.secondsight.env.Logger;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Class that takes in preview frames and converts the image to Bitmaps to process with Tensorflow.
@@ -42,13 +43,14 @@ public class TensorflowImageListener implements OnImageAvailableListener {
 
   private static final boolean SAVE_PREVIEW_BITMAP = false;
 
-  private static final String MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
+  private static final String MODEL_FILE = 
+    "file:///android_asset/tensorflow_text_detector.pb";
   private static final String LABEL_FILE =
-      "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+    "file:///android_asset/text_detector_label_strings.txt";
 
-  private static final int NUM_CLASSES = 1001;
-  private static final int INPUT_SIZE = 224;
-  private static final int IMAGE_MEAN = 117;
+  private static final int NUM_CLASSES = 2;
+  private static final int SEGMENT_SIZE = 128;
+  private static final int IMAGE_MEAN = 128;
 
   // TODO(andrewharp): Get orientation programatically.
   private final int screenRotation = 90;
@@ -60,7 +62,6 @@ public class TensorflowImageListener implements OnImageAvailableListener {
   private byte[][] yuvBytes;
   private int[] rgbBytes = null;
   private Bitmap rgbFrameBitmap = null;
-  private Bitmap croppedBitmap = null;
   
   private boolean computing = false;
   private Handler handler;
@@ -72,34 +73,40 @@ public class TensorflowImageListener implements OnImageAvailableListener {
       final RecognitionScoreView scoreView,
       final Handler handler) {
     tensorflow.initializeTensorflow(
-        assetManager, MODEL_FILE, LABEL_FILE, NUM_CLASSES, INPUT_SIZE, IMAGE_MEAN);
+        assetManager, MODEL_FILE, LABEL_FILE, NUM_CLASSES, SEGMENT_SIZE, IMAGE_MEAN);
     this.scoreView = scoreView;
     this.handler = handler;
   }
 
-  private void drawResizedBitmap(final Bitmap src, final Bitmap dst) {
-    Assert.assertEquals(dst.getWidth(), dst.getHeight());
-    final float minDim = Math.min(src.getWidth(), src.getHeight());
+  private void drawResizedBitmaps(final Bitmap src, final List<Bitmap> dst) {
+    // Resize the original image so that we only get complete segments
 
     final Matrix matrix = new Matrix();
 
-    // We only want the center square out of the original rectangle.
-    final float translateX = -Math.max(0, (src.getWidth() - minDim) / 2);
-    final float translateY = -Math.max(0, (src.getHeight() - minDim) / 2);
-    matrix.preTranslate(translateX, translateY);
+    final int new_width = (int)(Math.ceil((float)src.getWidth() / SEGMENT_SIZE) * SEGMENT_SIZE);
+    final int new_height = (int)(Math.ceil((float)src.getHeight() / SEGMENT_SIZE) * SEGMENT_SIZE);
 
-    final float scaleFactor = dst.getHeight() / minDim;
-    matrix.postScale(scaleFactor, scaleFactor);
+    final float horizontalScale = new_width / src.getWidth();
+    final float verticalScale = new_height / src.getHeight();
+    matrix.postScale(horizontalScale, verticalScale);
 
-    // Rotate around the center if necessary.
-    if (screenRotation != 0) {
-      matrix.postTranslate(-dst.getWidth() / 2.0f, -dst.getHeight() / 2.0f);
-      matrix.postRotate(screenRotation);
-      matrix.postTranslate(dst.getWidth() / 2.0f, dst.getHeight() / 2.0f);
+    LOGGER.v("Image will be scaled to: " + Integer.toString(new_width) + ", " + Integer.toString(new_height));
+
+    final Bitmap resizedBitmap = Bitmap.createBitmap(new_width, new_height, Config.ARGB_8888);
+    final Canvas c = new Canvas(resizedBitmap);
+    c.drawBitmap(src, matrix, null);
+
+    LOGGER.v("Finished resizing source image.");
+
+
+    // Extract the segments from the resized image
+
+    for (int horizontal_offset = 0; horizontal_offset < new_width; horizontal_offset += SEGMENT_SIZE)
+      for (int vertical_offset = 0; vertical_offset < new_height; vertical_offset += SEGMENT_SIZE) {
+      LOGGER.v("Extracting segment: " + Integer.toString(horizontal_offset) + ", " + Integer.toString(vertical_offset));
+
+      dst.add(Bitmap.createBitmap(resizedBitmap, horizontal_offset, vertical_offset, SEGMENT_SIZE, SEGMENT_SIZE));
     }
-
-    final Canvas canvas = new Canvas(dst);
-    canvas.drawBitmap(src, matrix, null);
   }
 
   @Override
@@ -131,7 +138,6 @@ public class TensorflowImageListener implements OnImageAvailableListener {
         LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbBytes = new int[previewWidth * previewHeight];
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
-        croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Config.ARGB_8888);
 
         yuvBytes = new byte[planes.length][];
         for (int i = 0; i < planes.length; ++i) {
@@ -169,27 +175,34 @@ public class TensorflowImageListener implements OnImageAvailableListener {
     }
 
     rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
-    drawResizedBitmap(rgbFrameBitmap, croppedBitmap);
-
-    // For examining the actual TF input.
-    if (SAVE_PREVIEW_BITMAP) {
-      ImageUtils.saveBitmap(croppedBitmap);
-    }
+    final List<Bitmap> segments = new ArrayList<Bitmap>();
+    drawResizedBitmaps(rgbFrameBitmap, segments);
 
     handler.post(
         new Runnable() {
           @Override
           public void run() {
-            final List<Classifier.Recognition> results = tensorflow.recognizeImage(croppedBitmap);
+            float confText = 0.0f;
+            
+            for (final Bitmap segment : segments) {
+              final List<Classifier.Recognition> results = tensorflow.recognizeImage(segment);
+              
+              if (results.get(0).getTitle().equals("text"))
+                confText = Math.max(results.get(0).getConfidence(), confText);
+              else
+                confText = Math.max(1.0f - results.get(0).getConfidence(), confText);
+           }
+           
+           
+           List<Classifier.Recognition> finalResults = new ArrayList<Classifier.Recognition>();
+          finalResults.add(new Classifier.Recognition("1", "text", confText, null));
+          finalResults.add(new Classifier.Recognition("0", "no-text", 1.0f - confText, null));
 
-            LOGGER.v("%d results", results.size());
-            for (final Classifier.Recognition result : results) {
-              LOGGER.v("Result: " + result.getTitle());
-            }
-            scoreView.setResults(results);
-            computing = false;
-          }
-        });
+          scoreView.setResults(finalResults);
+           
+          computing = false;
+         }
+       });
 
     Trace.endSection();
   }

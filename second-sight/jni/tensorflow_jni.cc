@@ -173,7 +173,7 @@ static std::string ClassifyImage(const RGBA* const bitmap_src,
   tensorflow::Tensor input_tensor(
       tensorflow::DT_FLOAT,
       tensorflow::TensorShape({
-          1, g_tensorflow_input_size, g_tensorflow_input_size, 3}));
+          1, g_tensorflow_input_size, g_tensorflow_input_size, 1}));
 
   auto input_tensor_mapped = input_tensor.tensor<float, 4>();
 
@@ -181,13 +181,8 @@ static std::string ClassifyImage(const RGBA* const bitmap_src,
   for (int i = 0; i < g_tensorflow_input_size; ++i) {
     const RGBA* src = bitmap_src + i * g_tensorflow_input_size;
     for (int j = 0; j < g_tensorflow_input_size; ++j) {
-       // Copy 3 values
       input_tensor_mapped(0, i, j, 0) =
-          static_cast<float>(src->red) - g_image_mean;
-      input_tensor_mapped(0, i, j, 1) =
-          static_cast<float>(src->green) - g_image_mean;
-      input_tensor_mapped(0, i, j, 2) =
-          static_cast<float>(src->blue) - g_image_mean;
+          (static_cast<float>(src->red) - g_image_mean) / 80;
       ++src;
     }
   }
