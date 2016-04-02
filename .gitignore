@@ -8,6 +8,7 @@ node_modules
 /bazel-testlogs
 /bazel-tf
 /data
+/second-sight/res/values/keys.xml
 /tensorflow/contrib/cmake/build
 /third_party/gpus/cuda/bin
 /third_party/gpus/cuda/cuda.config
