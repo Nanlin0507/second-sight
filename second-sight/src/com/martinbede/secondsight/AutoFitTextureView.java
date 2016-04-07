@@ -19,11 +19,14 @@ package com.martinbede.secondsight;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.TextureView;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 
 /**
  * A {@link TextureView} that can be adjusted to a specified aspect ratio.
  */
-public class AutoFitTextureView extends TextureView {
+public class AutoFitTextureView extends TextureView implements OnTouchListener {
   private int ratioWidth = 0;
   private int ratioHeight = 0;
 
@@ -37,6 +40,7 @@ public class AutoFitTextureView extends TextureView {
 
   public AutoFitTextureView(final Context context, final AttributeSet attrs, final int defStyle) {
     super(context, attrs, defStyle);
+    setOnTouchListener(this);
   }
 
   /**
@@ -70,5 +74,13 @@ public class AutoFitTextureView extends TextureView {
         setMeasuredDimension(height * ratioWidth / ratioHeight, height);
       }
     }
+  }
+  
+  @Override
+  public boolean onTouch(View v, MotionEvent event) {
+    CameraActivity activity = (CameraActivity) getContext();
+    activity.tts.stop();
+    
+    return true;
   }
 }

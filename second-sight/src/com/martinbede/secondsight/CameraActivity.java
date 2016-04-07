@@ -18,13 +18,27 @@ package com.martinbede.secondsight;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.WindowManager;
 
+import java.util.Locale;
+
 public class CameraActivity extends Activity {
+  public TextToSpeech tts;
+  
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    
+    tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+      @Override
+      public void onInit(int status) {
+        if(status != TextToSpeech.ERROR) {
+          tts.setLanguage(Locale.UK);
+        }
+      }
+    });
 
     setContentView(R.layout.activity_camera);
     if (null == savedInstanceState) {
@@ -33,5 +47,23 @@ public class CameraActivity extends Activity {
           .replace(R.id.container, CameraConnectionFragment.newInstance())
           .commit();
     }
+  }
+  
+  @Override
+  public void onPause() {
+    if (tts != null) {
+      tts.stop();
+    }
+    
+    super.onPause();
+  }
+  
+  @Override
+  public void onDestroy() {
+    if (tts != null) {
+      tts.shutdown();
+    }
+    
+    super.onDestroy();
   }
 }

@@ -16,6 +16,7 @@ limitations under the License.
 package com.martinbede.secondsight;
 
 import android.content.res.AssetManager;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -27,6 +28,7 @@ import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Handler;
 import android.os.Trace;
 import android.os.AsyncTask;
+import android.speech.tts.TextToSpeech;
 
 import junit.framework.Assert;
 
@@ -202,6 +204,8 @@ public class TensorflowImageListener implements OnImageAvailableListener {
         finalResults.add(new Classifier.Recognition("0", result, 1.0f, null));
 
         scoreView.setResults(finalResults);
+        
+        getCameraActivity().tts.speak(result, TextToSpeech.QUEUE_ADD, null);
       }
     }.execute();
   }
@@ -290,10 +294,21 @@ public class TensorflowImageListener implements OnImageAvailableListener {
               confText = Math.max(1.0f - results.get(0).getConfidence(), confText);
           }
 
-          if (confText > CONF_THRESH) {
+          if (confText > CONF_THRESH && !getCameraActivity().tts.isSpeaking()) {
+            getCameraActivity().tts.speak("Text detected...", TextToSpeech.QUEUE_ADD, null);
+          
             try {
               callCloudVision(rgbFrameBitmap);
             } catch (IOException exception) {}
+            
+            
+            
+            // Prevents rereading text immediately
+            try {
+              Thread.sleep(5000);
+            } catch(InterruptedException exception) {
+              Thread.currentThread().interrupt();
+            }
           }
 
           computing = false;
@@ -307,15 +322,23 @@ public class TensorflowImageListener implements OnImageAvailableListener {
     String message = "";
 
     List<EntityAnnotation> texts = response.getResponses().get(0).getTextAnnotations();
-    if (texts != null) {
-      for (EntityAnnotation text : texts) {
-        message += String.format("%.3f: %s", text.getScore(), text.getDescription());
-        message += "\n";
-      }
-    } else {
-      message += "nothing";
-    }
+    
+    if (texts != null && !texts.isEmpty())
+      message += texts.get(0).getDescription();
 
     return message;
+  }
+  
+  // From the official support library
+  // http://stackoverflow.com/questions/8276634/android-get-hosting-activity-from-a-view
+  private CameraActivity getCameraActivity() {
+    Context context = scoreView.getContext();
+    while (context instanceof ContextWrapper) {
+        if (context instanceof CameraActivity) {
+            return (CameraActivity)context;
+        }
+        context = ((ContextWrapper)context).getBaseContext();
+    }
+    return null;
   }
 }
