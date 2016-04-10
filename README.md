@@ -1,61 +1,72 @@
-<div align="center">
-  <img src="https://www.tensorflow.org/images/tf_logo_transp.png"><br><br>
-</div>
------------------
+**Second Sight** is an Android app that can read text "in the wild" (e.g. pricetags, product labels, text on shirts) using TensorFlow and Google Cloud Vision. It's my Udacity Machine Learning Nanodegree capstone project.
 
-|  **`Linux CPU`**   |  **`Linux GPU PIP`** | **`Mac OS CPU`** |  **`Android`** |
-|-------------------|----------------------|------------------|----------------|
-| [![Build Status](http://ci.tensorflow.org/buildStatus/icon?job=tensorflow-master-cpu)](http://ci.tensorflow.org/job/tensorflow-master-cpu) | [![Build Status](http://ci.tensorflow.org/buildStatus/icon?job=tensorflow-master-gpu_pip)](http://ci.tensorflow.org/job/tensorflow-master-gpu_pip) | [![Build Status](http://ci.tensorflow.org/buildStatus/icon?job=tensorflow-master-mac)](http://ci.tensorflow.org/job/tensorflow-master-mac) | [![Build Status](http://ci.tensorflow.org/buildStatus/icon?job=tensorflow-master-android)](http://ci.tensorflow.org/job/tensorflow-master-android) |
+## Features
+* Detect text using the camera
+* Read detected text (requires an Internet connection)
+* Interrupt speech by touching the lower portion of the screen
 
-**TensorFlow** is an open source software library for numerical computation using
-data flow graphs.  Nodes in the graph represent mathematical operations, while
-the graph edges represent the multidimensional data arrays (tensors) that flow
-between them.  This flexible architecture lets you deploy computation to one
-or more CPUs or GPUs in a desktop, server, or mobile device without rewriting
-code.  TensorFlow was originally developed by researchers and engineers
-working on the Google Brain team within Google's Machine Intelligence research
-organization for the purposes of conducting machine learning and deep neural
-networks research.  The system is general enough to be applicable in a wide
-variety of other domains, as well.
+### Examples of text the app can read
+(TODO)
 
-**If you'd like to contribute to tensorflow, be sure to review the [contribution
-guidelines](CONTRIBUTING.md).**
+### Examples of text the app can't read
+(TODO)
 
-**We use [github issues](https://github.com/tensorflow/tensorflow/issues) for
-tracking requests and bugs, but please see
-[Community](tensorflow/g3doc/resources/index.md#community) for general questions
-and discussion.**
+## Building
+1. Make sure you have the [Android SDK](http://developer.android.com/sdk/index.html) (API level 23), [NDK](http://developer.android.com/ndk/downloads/index.html) (API level 21), [TensorFlow](https://www.tensorflow.org/versions/r0.7/get_started/os_setup.html) (for Python 2.7), and [Bazel](http://bazel.io/docs/install.html) installed (It's recommended to use Ubuntu for building the application, as the Windows support of Bazel is experimental)
+2. Get the project from GitHub `git clone https://github.com/martinbede/second-sight --recursive` 
+3. Modify the WORKSPACE file so that the paths to the Android SDK and NDK are correct
+4. Get a Google Cloud Vision key and create a file at second-sight/res/values/keys.xml with the following content: 
+```
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="CloudVisionApiKey">ENTER_KEY_HERE!!</string>
+</resources>
+```
+5. Build the project `bazel build //second-sight:second-sight`
 
-## Installation
-*See [Download and Setup](tensorflow/g3doc/get_started/os_setup.md) for instructions on how to install our release binaries or how to build from source.*
+## Installing
+From the TensorFlow Android Demo README:
 
-People who are a little bit adventurous can also try our nightly binaries:
+If you get build errors about protocol buffers, run
+`git submodule update --init` and build again.
 
-* Linux CPU only: [Python 2](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-cpu/TF_BUILD_CONTAINER_TYPE=CPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON2,label=cpu-slave/lastSuccessfulBuild/artifact/pip_test/whl/tensorflow-0.7.1-cp27-none-linux_x86_64.whl) ([build history](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-cpu/TF_BUILD_CONTAINER_TYPE=CPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON2,label=cpu-slave/)) / [Python 3](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-cpu/TF_BUILD_CONTAINER_TYPE=CPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON3,label=cpu-slave/lastSuccessfulBuild/artifact/pip_test/whl/tensorflow-0.7.1-py3-none-any.whl) ([build history](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-cpu/TF_BUILD_CONTAINER_TYPE=CPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON3,label=cpu-slave/))
-* Linux GPU: [Python 2](http://ci.tensorflow.org/view/Nightly/job/nigntly-matrix-linux-gpu/TF_BUILD_CONTAINER_TYPE=GPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON2,label=gpu-slave/lastSuccessfulBuild/artifact/pip_test/whl/tensorflow-0.7.1-py2-none-any.whl) ([build history](http://ci.tensorflow.org/view/Nightly/job/nigntly-matrix-linux-gpu/TF_BUILD_CONTAINER_TYPE=GPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON2,label=gpu-slave/)) / [Python 3](http://ci.tensorflow.org/view/Nightly/job/nigntly-matrix-linux-gpu/TF_BUILD_CONTAINER_TYPE=GPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON3,label=gpu-slave/lastSuccessfulBuild/artifact/pip_test/whl/tensorflow-0.7.1-py3-none-any.whl) ([build history](http://ci.tensorflow.org/view/Nightly/job/nigntly-matrix-linux-gpu/TF_BUILD_CONTAINER_TYPE=GPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON3,label=gpu-slave/))
-* Mac CPU only: [Python 2](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-cpu/TF_BUILD_CONTAINER_TYPE=CPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON2,label=mac-slave/lastSuccessfulBuild/artifact/pip_test/whl/tensorflow-0.7.1-py2-none-any.whl) ([build history](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-cpu/TF_BUILD_CONTAINER_TYPE=CPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON2,label=mac-slave/)) / [Python 3](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-cpu/TF_BUILD_CONTAINER_TYPE=CPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON3,label=mac-slave/lastSuccessfulBuild/artifact/pip_test/whl/tensorflow-0.7.1-py3-none-any.whl) ([build history](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-cpu/TF_BUILD_CONTAINER_TYPE=CPU,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=PIP,TF_BUILD_PYTHON_VERSION=PYTHON3,label=mac-slave/))
-* [Android](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-android/TF_BUILD_CONTAINER_TYPE=ANDROID,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=NO_PIP,TF_BUILD_PYTHON_VERSION=PYTHON2,label=android-slave/lastSuccessfulBuild/artifact/bazel-out/local_linux/bin/tensorflow/examples/android/tensorflow_demo.apk) ([build history](http://ci.tensorflow.org/view/Nightly/job/nightly-matrix-android/TF_BUILD_CONTAINER_TYPE=ANDROID,TF_BUILD_IS_OPT=OPT,TF_BUILD_IS_PIP=NO_PIP,TF_BUILD_PYTHON_VERSION=PYTHON2,label=android-slave/))
+If adb debugging is enabled on your Android 5.0 or later device, you may then
+use the following command from your workspace root to install the APK once
+built:
+ 
+```bash
+$ adb install -r -g bazel-bin/second-sight/second-sight.apk
+```
+ 
+Some older versions of adb might complain about the -g option (returning:
+"Error: Unknown option: -g").  In this case, if your device runs Android 6.0 or
+later, then make sure you update to the latest adb version before trying the
+install command again. If your device runs earlier versions of Android, however,
+you can issue the install command without the -g option.
 
-#### *Try your first TensorFlow program*
-```python
-$ python
+Alternatively, a streamlined means of building, installing and running in one
+command is:
 
->>> import tensorflow as tf
->>> hello = tf.constant('Hello, TensorFlow!')
->>> sess = tf.Session()
->>> sess.run(hello)
-Hello, TensorFlow!
->>> a = tf.constant(10)
->>> b = tf.constant(32)
->>> sess.run(a+b)
-42
->>>
+```bash
+$ bazel mobile-install //second-sight:second-sight --start_app
 ```
 
-##For more information
+If camera permission errors are encountered (possible on Android Marshmallow or
+above), then the `adb install` command above should be used instead, as it
+automatically grants the required camera permissions with `-g`. The permission
+errors may not be obvious if the app halts immediately, so if you installed
+with bazel and the app doesn't come up, then the easiest thing to do is try
+installing with adb.
 
-* [TensorFlow website](http://tensorflow.org)
-* [TensorFlow whitepaper](http://download.tensorflow.org/paper/whitepaper2015.pdf)
-* [TensorFlow MOOC on Udacity] (https://www.udacity.com/course/deep-learning--ud730)
+## Modifying
+These are the most important files of the project: 
+* notebooks/Prepare data.ipynb: Downloads the datasets and prepares the data for training
+* notebooks/Create and freeze graph.ipynb: Defines, trains, and saves the classifier, which is a ConvNet that looks for text in images
+* second-sight/src/.../TensorflowImageListener.java: Preprocesses images, calls the JNI code to do inference, calls the Cloud Vision API, etc.
+* second-sight/jni/tensorflow_jni.cc: The inference happens here
 
-The TensorFlow community has created amazing things with TensorFlow, please see the [resources section of tensorflow.org](https://www.tensorflow.org/versions/master/resources#community) for an incomplete list.
+## Used works
+* [TensorFlow numerical computation library](https://www.tensorflow.org/)
+* [Microsoft Common Objects in Context dataset](http://mscoco.org/)
+* [COCO-Text dataset](http://vision.cornell.edu/se3/coco-text/)
+* [Google Cloud Vision API](https://cloud.google.com/vision/)
