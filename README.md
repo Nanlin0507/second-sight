@@ -11,7 +11,7 @@
 ### Examples of text the app can't read
 (TODO)
 
-## Building
+## Build instructions
 1. Make sure you have the [Android SDK](http://developer.android.com/sdk/index.html) (API level 23), [NDK](http://developer.android.com/ndk/downloads/index.html) (API level 21), [TensorFlow](https://www.tensorflow.org/versions/r0.7/get_started/os_setup.html) (for Python 2.7), and [Bazel](http://bazel.io/docs/install.html) installed (It's recommended to use Ubuntu for building the application, as the Windows support of Bazel is experimental)
 2. Get the project from GitHub `git clone https://github.com/martinbede/second-sight --recursive` 
 3. Modify the WORKSPACE file so that the paths to the Android SDK and NDK are correct
@@ -24,7 +24,7 @@
 ```
 5. Build the project `bazel build //second-sight:second-sight`
 
-## Installing
+## How to install
 From the TensorFlow Android Demo README:
 
 If you get build errors about protocol buffers, run
@@ -58,7 +58,7 @@ errors may not be obvious if the app halts immediately, so if you installed
 with bazel and the app doesn't come up, then the easiest thing to do is try
 installing with adb.
 
-## Modifying
+## Tips for modifying
 These are the most important files of the project: 
 * notebooks/Prepare data.ipynb: Downloads the datasets and prepares the data for training
 * notebooks/Create and freeze graph.ipynb: Defines, trains, and saves the classifier, which is a ConvNet that looks for text in images
