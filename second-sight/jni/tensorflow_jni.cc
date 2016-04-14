@@ -58,10 +58,10 @@ inline static int64 CurrentThreadTimeUs() {
 }
 
 JNIEXPORT jint JNICALL
-TENSORFLOW_METHOD(initializeTensorflow)(
-    JNIEnv* env, jobject thiz, jobject java_asset_manager,
-    jstring model, jstring labels,
-    jint num_classes, jint mognet_input_size, jint image_mean) {
+  TENSORFLOW_METHOD(initializeTensorflow)(
+  JNIEnv* env, jobject thiz, jobject java_asset_manager,
+  jstring model, jstring labels,
+  jint num_classes, jint mognet_input_size, jint image_mean) {
   g_num_runs = 0;
   g_timing_total_us = 0;
 
@@ -91,7 +91,7 @@ TENSORFLOW_METHOD(initializeTensorflow)(
   LOG(INFO) << "Graph created.";
 
   AAssetManager* const asset_manager =
-      AAssetManager_fromJava(env, java_asset_manager);
+    AAssetManager_fromJava(env, java_asset_manager);
   LOG(INFO) << "Acquired AssetManager.";
 
   LOG(INFO) << "Reading file to proto: " << model_cstr;
@@ -111,32 +111,32 @@ TENSORFLOW_METHOD(initializeTensorflow)(
   // Read the label list
   ReadFileToVector(asset_manager, labels_cstr, &g_label_strings);
   LOG(INFO) << g_label_strings.size() << " label strings loaded from: "
-            << labels_cstr;
+    << labels_cstr;
   g_compute_graph_initialized = true;
 
   return 0;
 }
 
 namespace {
-typedef struct {
-  uint8 red;
-  uint8 green;
-  uint8 blue;
-  uint8 alpha;
-} RGBA;
+  typedef struct {
+    uint8 red;
+    uint8 green;
+    uint8 blue;
+    uint8 alpha;
+  } RGBA;
 }  // namespace
 
 // Returns the top N confidence values over threshold in the provided vector,
 // sorted by confidence in descending order.
 static void GetTopN(
-    const Eigen::TensorMap<Eigen::Tensor<float, 1, Eigen::RowMajor>,
-                           Eigen::Aligned>& prediction,
-    const int num_results, const float threshold,
-    std::vector<std::pair<float, int> >* top_results) {
+  const Eigen::TensorMap<Eigen::Tensor<float, 1, Eigen::RowMajor>,
+  Eigen::Aligned>& prediction,
+  const int num_results, const float threshold,
+  std::vector<std::pair<float, int> >* top_results) {
   // Will contain top N results in ascending order.
   std::priority_queue<std::pair<float, int>,
-      std::vector<std::pair<float, int> >,
-      std::greater<std::pair<float, int> > > top_result_pq;
+  std::vector<std::pair<float, int> >,
+  std::greater<std::pair<float, int> > > top_result_pq;
 
   const int count = prediction.size();
   for (int i = 0; i < count; ++i) {
@@ -171,9 +171,9 @@ static std::string ClassifyImage(const RGBA* const bitmap_src,
 
   // Create input tensor
   tensorflow::Tensor input_tensor(
-      tensorflow::DT_FLOAT,
-      tensorflow::TensorShape({
-          1, g_tensorflow_input_size, g_tensorflow_input_size, 1}));
+    tensorflow::DT_FLOAT,
+    tensorflow::TensorShape({
+      1, g_tensorflow_input_size, g_tensorflow_input_size, 1}));
 
   auto input_tensor_mapped = input_tensor.tensor<float, 4>();
 
@@ -182,13 +182,13 @@ static std::string ClassifyImage(const RGBA* const bitmap_src,
     const RGBA* src = bitmap_src + i * g_tensorflow_input_size;
     for (int j = 0; j < g_tensorflow_input_size; ++j) {
       input_tensor_mapped(0, i, j, 0) =
-          (static_cast<float>(src->red) - g_image_mean) / 80;
+        (static_cast<float>(src->red) - g_image_mean) / 80;
       ++src;
     }
   }
 
   std::vector<std::pair<std::string, tensorflow::Tensor> > input_tensors(
-      {{"input:0", input_tensor}});
+    {{"input:0", input_tensor}});
 
   VLOG(0) << "Start computing.";
   std::vector<tensorflow::Tensor> output_tensors;
@@ -196,14 +196,14 @@ static std::string ClassifyImage(const RGBA* const bitmap_src,
 
   const int64 start_time = CurrentThreadTimeUs();
   tensorflow::Status s =
-      session->Run(input_tensors, output_names, {}, &output_tensors);
+    session->Run(input_tensors, output_names, {}, &output_tensors);
   const int64 end_time = CurrentThreadTimeUs();
 
   const int64 elapsed_time_inf = end_time - start_time;
   g_timing_total_us += elapsed_time_inf;
   VLOG(0) << "End computing. Ran in " << elapsed_time_inf / 1000 << "ms ("
-          << (g_timing_total_us / g_num_runs / 1000) << "ms avg over "
-          << g_num_runs << " runs)";
+    << (g_timing_total_us / g_num_runs / 1000) << "ms avg over "
+    << g_num_runs << " runs)";
 
   if (!s.ok()) {
     LOG(ERROR) << "Error during inference: " << s;
@@ -242,14 +242,14 @@ static std::string ClassifyImage(const RGBA* const bitmap_src,
 }
 
 JNIEXPORT jstring JNICALL
-TENSORFLOW_METHOD(classifyImageRgb)(
-    JNIEnv* env, jobject thiz, jintArray image, jint width, jint height) {
+  TENSORFLOW_METHOD(classifyImageRgb)(
+  JNIEnv* env, jobject thiz, jintArray image, jint width, jint height) {
   // Copy image into currFrame.
   jboolean iCopied = JNI_FALSE;
   jint* pixels = env->GetIntArrayElements(image, &iCopied);
 
   std::string result = ClassifyImage(
-      reinterpret_cast<const RGBA*>(pixels), width * 4, width, height);
+    reinterpret_cast<const RGBA*>(pixels), width * 4, width, height);
 
   env->ReleaseIntArrayElements(image, pixels, JNI_ABORT);
 
@@ -257,8 +257,8 @@ TENSORFLOW_METHOD(classifyImageRgb)(
 }
 
 JNIEXPORT jstring JNICALL
-TENSORFLOW_METHOD(classifyImageBmp)(
-    JNIEnv* env, jobject thiz, jobject bitmap) {
+  TENSORFLOW_METHOD(classifyImageBmp)(
+  JNIEnv* env, jobject thiz, jobject bitmap) {
   // Obtains the bitmap information.
   AndroidBitmapInfo info;
   CHECK_EQ(AndroidBitmap_getInfo(env, bitmap, &info),
@@ -272,11 +272,11 @@ TENSORFLOW_METHOD(classifyImageBmp)(
   // TODO(jiayq): deal with other formats if necessary.
   if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
     return env->NewStringUTF(
-        "Error: Android system is not using RGBA_8888 in default.");
+      "Error: Android system is not using RGBA_8888 in default.");
   }
 
   std::string result = ClassifyImage(
-      static_cast<const RGBA*>(pixels), info.stride, info.width, info.height);
+    static_cast<const RGBA*>(pixels), info.stride, info.width, info.height);
 
   // Finally, unlock the pixels
   CHECK_EQ(AndroidBitmap_unlockPixels(env, bitmap),

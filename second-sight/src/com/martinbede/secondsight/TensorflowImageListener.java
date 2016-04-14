@@ -56,7 +56,7 @@ import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 
 /**
- * Class that takes in preview frames and converts the image to Bitmaps to process with Tensorflow.
+ * Class that takes in preview frames and converts the image to Bitmaps to process with Tensorflow and Google Cloud Vision. If text is returned by GCV, it is read aloud.
  */
 public class TensorflowImageListener implements OnImageAvailableListener {
   private static final Logger LOGGER = new Logger();
@@ -122,7 +122,6 @@ public class TensorflowImageListener implements OnImageAvailableListener {
 
 
     // Extract the segments from the resized image
-
     for (int horizontal_offset = 0; horizontal_offset < new_width; horizontal_offset += SEGMENT_SIZE)
       for (int vertical_offset = 0; vertical_offset < new_height; vertical_offset += SEGMENT_SIZE) {
       LOGGER.v("Extracting segment: " + Integer.toString(horizontal_offset) + ", " + Integer.toString(vertical_offset));
@@ -197,6 +196,7 @@ public class TensorflowImageListener implements OnImageAvailableListener {
         return "Cloud Vision API request failed. Check logs for details.";
       }
 
+      // Process the extracted text
       protected void onPostExecute(String result) {
         LOGGER.v(result);
 
@@ -204,7 +204,7 @@ public class TensorflowImageListener implements OnImageAvailableListener {
         finalResults.add(new Classifier.Recognition("0", result, 1.0f, null));
 
         scoreView.setResults(finalResults);
-        
+
         getCameraActivity().tts.speak(result, TextToSpeech.QUEUE_ADD, null);
       }
     }.execute();
@@ -275,10 +275,12 @@ public class TensorflowImageListener implements OnImageAvailableListener {
       return;
     }
 
+    // Preprocesses the image
     rgbFrameBitmap.setPixels(rgbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
     final List<Bitmap> segments = new ArrayList<Bitmap>();
     drawResizedBitmaps(rgbFrameBitmap, segments);
 
+    // A separate thread for the classifier
     handler.post(
       new Runnable() {
         @Override
@@ -296,14 +298,14 @@ public class TensorflowImageListener implements OnImageAvailableListener {
 
           if (confText > CONF_THRESH && !getCameraActivity().tts.isSpeaking()) {
             getCameraActivity().tts.speak("Text detected...", TextToSpeech.QUEUE_ADD, null);
-          
+
             try {
               callCloudVision(rgbFrameBitmap);
             } catch (IOException exception) {}
-            
-            
-            
-            // Prevents rereading text immediately
+
+
+
+            // Prevents immediate rereading
             try {
               Thread.sleep(5000);
             } catch(InterruptedException exception) {
@@ -322,22 +324,22 @@ public class TensorflowImageListener implements OnImageAvailableListener {
     String message = "";
 
     List<EntityAnnotation> texts = response.getResponses().get(0).getTextAnnotations();
-    
+
     if (texts != null && !texts.isEmpty())
       message += texts.get(0).getDescription();
 
     return message;
   }
-  
+
   // From the official support library
   // http://stackoverflow.com/questions/8276634/android-get-hosting-activity-from-a-view
   private CameraActivity getCameraActivity() {
     Context context = scoreView.getContext();
     while (context instanceof ContextWrapper) {
-        if (context instanceof CameraActivity) {
-            return (CameraActivity)context;
-        }
-        context = ((ContextWrapper)context).getBaseContext();
+      if (context instanceof CameraActivity) {
+        return (CameraActivity)context;
+      }
+      context = ((ContextWrapper)context).getBaseContext();
     }
     return null;
   }
