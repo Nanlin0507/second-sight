@@ -8,7 +8,7 @@
 Check out the Conclusion section of the [Project Report](https://github.com/martinbede/second-sight/blob/master/Project_Report.pdf) for a description of the overall performance.
 
 ## Build instructions
-1. Make sure you have the [Android SDK](http://developer.android.com/sdk/index.html) (API level **23**, sdk-build-tools version **23.0.1**), NDK **r10** (see download links below), [TensorFlow](https://www.tensorflow.org/versions/r0.7/get_started/os_setup.html) (for Python 2.7), and [Bazel **0.1.5**](http://bazel.io/docs/install.html) installed (It's strongly recommended to use Ubuntu or OS X for building the application, as the Windows support of Bazel is experimental)
+1. Make sure you have the [Android SDK](http://developer.android.com/sdk/index.html) (API level **23**, sdk-build-tools version **23.0.1**), NDK **r10e** (see download links below), [TensorFlow](https://www.tensorflow.org/versions/r0.7/get_started/os_setup.html) (for Python 2.7), and [Bazel **0.1.5**](http://bazel.io/docs/install.html) installed (It's strongly recommended to use Ubuntu or OS X for building the application, as the Windows support of Bazel is experimental)
 2. Get the project from GitHub `git clone https://github.com/martinbede/second-sight --recursive` 
 3. Modify the WORKSPACE file so that the paths to the Android SDK and NDK are correct
 4. Get a Google Cloud Vision key and create a file at second-sight/res/values/keys.xml with the following content: 
@@ -20,13 +20,12 @@ Check out the Conclusion section of the [Project Report](https://github.com/mart
 ```
 5. Build the project `bazel build //second-sight:second-sight`
 
-### NDK r10 download links
-* [Linux x86](http://dl.google.com/android/ndk/android-ndk32-r10-linux-x86.tar.bz2)
-* [Linux x86_64](http://dl.google.com/android/ndk/android-ndk32-r10-linux-x86_64.tar.bz2)
-* [OS X x86](http://dl.google.com/android/ndk/android-ndk32-r10-darwin-x86.tar.bz2)
-* [OS X x86_64](http://dl.google.com/android/ndk/android-ndk32-r10-darwin-x86_64.tar.bz2)
-* [Windows x86](http://dl.google.com/android/ndk/android-ndk32-r10-windows-x86.zip)
-* [Windows x86_64](http://dl.google.com/android/ndk/android-ndk32-r10-windows-x86_64.zip)
+### NDK r10e download links
+* [Linux x86](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin)
+* [Linux x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin)
+* [OS X x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin)
+* [Windows x86](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe)
+* [Windows x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe)
 
 ## How to install
 From the TensorFlow Android Demo README:
