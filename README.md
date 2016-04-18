@@ -7,28 +7,8 @@
 
 Check out the Conclusion section of the [Project Report](https://github.com/martinbede/second-sight/blob/master/Project_Report.pdf) for a description of the overall performance.
 
-## Build instructions
-1. Make sure you have the [Android SDK](http://developer.android.com/sdk/index.html) (API level **23**, sdk-build-tools version **23.0.1**), NDK **r10e** (see download links below), [TensorFlow](https://www.tensorflow.org/versions/r0.7/get_started/os_setup.html) (for Python 2.7), and [Bazel **0.1.5**](http://bazel.io/docs/install.html) installed (It's strongly recommended to use Ubuntu or OS X for building the application, as the Windows support of Bazel is experimental)
-2. Get the project from GitHub `git clone https://github.com/martinbede/second-sight --recursive` 
-3. Modify the WORKSPACE file so that the paths to the Android SDK and NDK are correct
-4. Get a Google Cloud Vision key and create a file at second-sight/res/values/keys.xml with the following content: 
-```
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="CloudVisionApiKey">ENTER_KEY_HERE!!</string>
-</resources>
-```
-5. Build the project `bazel build //second-sight:second-sight`
-
-### NDK r10e download links
-* [Linux x86](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin)
-* [Linux x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin)
-* [OS X x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin)
-* [Windows x86](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe)
-* [Windows x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe)
-
 ## How to install
-A prebuilt APK is available in the bin directory.
+A prebuilt APK is available in the bin directory: [download](https://github.com/martinbede/second-sight/blob/master/bin/second-sight.apk)
 
 The following instructions are from the TensorFlow Android Demo README:
 
@@ -80,6 +60,26 @@ These are the most important files of the project:
 The notebooks use bash commands to create/delete directories and to download and unzip archives. These might not run on some systems (e.g. Windows). In that case, you have to do those tasks manually.
 
 Also note that training the neural network requires a computer with a relatively new NVIDIA GPU (e.g. GeForce 980TI), at least 8 GB of RAM, and a fast internet connection (the dataset used for training is larger than 10 GB).
+
+## Build instructions
+1. Make sure you have the [Android SDK](http://developer.android.com/sdk/index.html) (API level **23**, sdk-build-tools version **23.0.1**), NDK **r10e** (see download links below), [TensorFlow](https://www.tensorflow.org/versions/r0.7/get_started/os_setup.html) (for Python 2.7), and [Bazel **0.1.5**](http://bazel.io/docs/install.html) installed (It's strongly recommended to use Ubuntu or OS X for building the application, as the Windows support of Bazel is experimental)
+2. Get the project from GitHub `git clone https://github.com/martinbede/second-sight --recursive` 
+3. Modify the WORKSPACE file so that the paths to the Android SDK and NDK are correct
+4. Get a Google Cloud Vision key and create a file at second-sight/res/values/keys.xml with the following content: 
+```
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="CloudVisionApiKey">ENTER_KEY_HERE!!</string>
+</resources>
+```
+5. Build the project `bazel build //second-sight:second-sight`
+
+### NDK r10e download links
+* [Linux x86](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin)
+* [Linux x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin)
+* [OS X x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin)
+* [Windows x86](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe)
+* [Windows x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe)
 
 ## Used works
 * [TensorFlow numerical computation library](https://www.tensorflow.org/)
