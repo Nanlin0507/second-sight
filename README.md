@@ -1,4 +1,4 @@
-**Second Sight** is an Android app that can read text "in the wild" (e.g. price tags, product labels, text on shirts) using TensorFlow and Google Cloud Vision. It's my Udacity Machine Learning Nanodegree capstone project.
+**Second Sight** is an Android 6.0+ app that can read text "in the wild" (e.g. price tags, product labels, text on shirts) using TensorFlow and Google Cloud Vision. It's my Udacity Machine Learning Nanodegree capstone project.
 
 ## Features
 * Detect text using the camera
@@ -27,7 +27,7 @@ install command again. If your device runs earlier versions of Android, however,
 you can issue the install command without the -g option.
 
 ## Tips for modifying
-The neural network running on the device and detecting text is trained using [Jupyter Notebooks](http://jupyter.org/) using the following Python libraries:
+The neural network running on the device and detecting text is trained using [Jupyter Notebooks](http://jupyter.org/) using the following Python 2.7 libraries:
 * NumPy 1.10.4
 * Python Imaging Library 1.1.7
 * MatPlotLib 1.4.3
