@@ -12,9 +12,6 @@ A prebuilt APK is available in the bin directory: [download](https://github.com/
 
 The following instructions are from the TensorFlow Android Demo README:
 
-If you get build errors about protocol buffers, run
-`git submodule update --init` and build again.
-
 If adb debugging is enabled on your Android 5.0 or later device, you may then
 use the following command from your workspace root to install the APK once
 built:
@@ -28,20 +25,6 @@ Some older versions of adb might complain about the -g option (returning:
 later, then make sure you update to the latest adb version before trying the
 install command again. If your device runs earlier versions of Android, however,
 you can issue the install command without the -g option.
-
-Alternatively, a streamlined means of building, installing and running in one
-command is:
-
-```bash
-$ bazel mobile-install //second-sight:second-sight --start_app
-```
-
-If camera permission errors are encountered (possible on Android Marshmallow or
-above), then the `adb install` command above should be used instead, as it
-automatically grants the required camera permissions with `-g`. The permission
-errors may not be obvious if the app halts immediately, so if you installed
-with bazel and the app doesn't come up, then the easiest thing to do is try
-installing with adb.
 
 ## Tips for modifying
 The neural network running on the device and detecting text is trained using [Jupyter Notebooks](http://jupyter.org/) using the following Python libraries:
@@ -65,7 +48,7 @@ Also note that training the neural network requires a computer with a relatively
 1. Make sure you have the [Android SDK](http://developer.android.com/sdk/index.html) (API level **23**, sdk-build-tools version **23.0.1**), NDK **r10e** (see download links below), [TensorFlow](https://www.tensorflow.org/versions/r0.7/get_started/os_setup.html) (for Python 2.7), and [Bazel **0.1.5**](http://bazel.io/docs/install.html) installed (It's strongly recommended to use Ubuntu or OS X for building the application, as the Windows support of Bazel is experimental)
 2. Get the project from GitHub `git clone https://github.com/martinbede/second-sight --recursive` 
 3. Modify the WORKSPACE file so that the paths to the Android SDK and NDK are correct
-4. Get a Google Cloud Vision key and create a file at second-sight/res/values/keys.xml with the following content: 
+4. Get a Google Cloud Vision key and create a file at second-sight/res/values/keys.xml with the following content:
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -73,6 +56,11 @@ Also note that training the neural network requires a computer with a relatively
 </resources>
 ```
 5. Build the project `bazel build //second-sight:second-sight`
+
+To build, install, and run the app: `bazel mobile-install //second-sight:second-sight --start_app`
+
+If you get build errors about protocol buffers, run
+`git submodule update --init` and build again.
 
 ### NDK r10e download links
 * [Linux x86](http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin)
