@@ -1,4 +1,4 @@
-**Second Sight** is an Android app that can read text "in the wild" (e.g. pricetags, product labels, text on shirts) using TensorFlow and Google Cloud Vision. It's my Udacity Machine Learning Nanodegree capstone project.
+**Second Sight** is an Android app that can read text "in the wild" (e.g. price tags, product labels, text on shirts) using TensorFlow and Google Cloud Vision. It's my Udacity Machine Learning Nanodegree capstone project.
 
 ## Features
 * Detect text using the camera
@@ -28,7 +28,9 @@ Check out the Conclusion section of the [Project Report](https://github.com/mart
 * [Windows x86_64](http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe)
 
 ## How to install
-From the TensorFlow Android Demo README:
+A prebuilt APK is available in the bin directory.
+
+The following instructions are from the TensorFlow Android Demo README:
 
 If you get build errors about protocol buffers, run
 `git submodule update --init` and build again.
@@ -62,13 +64,22 @@ with bazel and the app doesn't come up, then the easiest thing to do is try
 installing with adb.
 
 ## Tips for modifying
+The neural network running on the device and detecting text is trained using [Jupyter Notebooks](http://jupyter.org/) using the following Python libraries:
+* NumPy 1.10.4
+* Python Imaging Library 1.1.7
+* MatPlotLib 1.4.3
+* TensorFlow 0.7.1
+* SciPy 0.16.0
+
 These are the most important files of the project: 
 * notebooks/Prepare data.ipynb: Downloads the datasets and prepares the data for training
 * notebooks/Create and freeze graph.ipynb: Defines, trains, and saves the classifier, which is a ConvNet that looks for text in images
 * second-sight/src/.../TensorflowImageListener.java: Preprocesses images, calls the JNI code to do inference, calls the Cloud Vision API, etc.
 * second-sight/jni/tensorflow_jni.cc: The inference happens here
 
-The notebooks use bash commands to create/delete directories, and to download and unzip archives. These might not run on some systems (e.g. Windows). In that case, you have to do those tasks manually.
+The notebooks use bash commands to create/delete directories and to download and unzip archives. These might not run on some systems (e.g. Windows). In that case, you have to do those tasks manually.
+
+Also note that training the neural network requires a computer with a relatively new NVIDIA GPU (e.g. GeForce 980TI), at least 8 GB of RAM, and a fast internet connection (the dataset used for training is larger than 10 GB).
 
 ## Used works
 * [TensorFlow numerical computation library](https://www.tensorflow.org/)
